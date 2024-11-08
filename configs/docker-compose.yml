@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  #-> DB Server Runner
+  postgresql:
+    image: postgres:13
+    container_name: postgresql
+    restart: on-failure
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    network_mode: host
+
+  #-> API SERVER RUN
+  api-server:
+    image: api-server
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: api-server
+    restart: always
+    env_file:
+      - docker.env
+    depends_on:
+      - postgresql
+    network_mode: host
+
+  #-> PG Admin Panel
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: on-failure
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@pg.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    ports:
+      - 5050:80
+    depends_on:
+      - postgresql

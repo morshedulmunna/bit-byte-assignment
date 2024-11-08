@@ -1,0 +1,16 @@
+# Use an official Node.js, and it should be version 16 and above
+FROM node:lts-bullseye-slim
+# Set the working directory in the container
+WORKDIR /api
+# Copy package.json and pnpm-lock.yaml
+
+COPY  ../package.json ./
+
+COPY ../ ./
+
+# Install dependencies
+RUN npm install
+# Expose the app
+EXPOSE 5000
+# Start the application
+CMD ["npm", "run", "start:dev"]
